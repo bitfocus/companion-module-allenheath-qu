@@ -1,0 +1,16 @@
+{
+	"name": "allenheath-qu",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": ["QU16","QU24","QU32"],
+	"manufacturer": "Allen & Heath",
+	"product": ["QU16","QU24","QU32"],
+	"shortname": "QU",
+	"description" : "Allen & Heath QU module for Companion",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Max Kiusso",
+	"license": "MIT"
+}
