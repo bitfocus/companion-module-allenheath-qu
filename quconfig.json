@@ -1,0 +1,46 @@
+{
+	"config" : {
+		"QU16" : {
+			"chCount"	: 16,
+			"chStereo"	: 3,
+			"mixCount"	: 4,
+			"mixStereo"	: 3,
+			"grpCount"	: 0,
+			"fxrCount"	: 4,
+			"fxsCount"	: 2,
+			"mtxCount"	: 0,
+			"dcaCount"	: 4,
+			"muteGroup"	: 4,
+			"SoftKey"	: 15,
+			"sceneCount": 100
+		},
+		"QU24" : {
+			"chCount"	: 24,
+			"chStereo"	: 3,
+			"mixCount"	: 4,
+			"mixStereo"	: 3,
+			"grpCount"	: 2,
+			"fxrCount"	: 4,
+			"fxsCount"	: 4,
+			"mtxCount"	: 2,
+			"dcaCount"	: 4,
+			"muteGroup"	: 4,
+			"SoftKey"	: 15,
+			"sceneCount": 100
+		},
+		"QU32" : {
+			"chCount"	: 32,
+			"chStereo"	: 3,
+			"mixCount"	: 4,
+			"mixStereo"	: 3,
+			"grpCount"	: 4,
+			"fxrCount"	: 4,
+			"fxsCount"	: 4,
+			"mtxCount"	: 2,
+			"dcaCount"	: 4,
+			"muteGroup"	: 4,
+			"SoftKey"	: 15,
+			"sceneCount": 100
+		}
+	}
+}
