@@ -29,6 +29,8 @@ module.exports = {
 		}
 		
 		this.CHOICES_FADER = [];
+		this.CHOICES_FADER.push({ label: `Step fader +1 dB`, id: 999});
+		this.CHOICES_FADER.push({ label: `Step fader -1 dB`, id: 998});
         for (let i = 0; i < level.level.length; i++) {
             let dbStr = level.level[i][0];
 			this.CHOICES_FADER.push({ label: `${dbStr} dB`, id: parseInt(level.level[i][1], 16) })
@@ -537,17 +539,17 @@ module.exports = {
 				options: this.panOptions('Group', qu['grpCount'], 7, 99, ['Stereo', this.CHOICES_STEREO_CHANNEL], true)
 			};
 		}
-		actions['sendlev_fxr_mix'] = {
+		actions['sendlev_fx_return_mix'] = {
 			label: 'Level FX Return to Mix',
 			options: this.panOptions('Mix', qu['mixCount'], -1, qu['mixStereo'], ['FX Return', this.CHOICES_FX_RETURN], true)
 		}
 		if (this.config.model != 'QU16') {
-			actions['sendlev_fxr_group'] = {
+			actions['sendlev_fx_return_group'] = {
 				label: 'Level FX Return to Group (Mix mode)',
 				options: this.panOptions('Group', qu['grpCount'], 7, 99, ['FX Return', this.CHOICES_FX_RETURN], true)
 			};
 		}
-		actions['sendlev_fxr_fxs'] = {
+		actions['sendlev_fx_return_fxs'] = {
 			label: 'Level FX Return to FX Send',
 			options: this.panOptions('FX Send', qu['fxsCount'], 9, 0, ['FX Return', this.CHOICES_FX_RETURN], true)
 		}

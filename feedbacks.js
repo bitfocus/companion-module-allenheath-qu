@@ -88,24 +88,26 @@ module.exports = {
             }
         }
         
-        feedbacks['mute_group'] = {
-            label: 'Mute Group',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
+        if (this.config.model != 'QU16') {
+            feedbacks['mute_group'] = {
+                label: 'Mute Group',
+                description: 'Change colour',
+                options: [
+                    {
+                        type: 'colorpicker',
+                        label: 'Foreground color',
+                        id: 'fg',
+                        default: this.rgb(255, 255, 255)
+                    },{
+                        type: 'colorpicker',
+                        label: 'Background color',
+                        id: 'bg',
+                        default: this.rgb(153, 0, 51)
+                    }
+                ],
+                callback: (feedback, bank) => {
+                    return this.feedbackStatus(feedback, bank, 'mute_group', 0x68);
                 }
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_group', 0x68);
             }
         }
         
@@ -151,24 +153,26 @@ module.exports = {
             }
         }
         
-        feedbacks['mute_matrix'] = {
-            label: 'Mute Matrix',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
+        if (this.config.model != 'QU16') {
+            feedbacks['mute_matrix'] = {
+                label: 'Mute Matrix',
+                description: 'Change colour',
+                options: [
+                    {
+                        type: 'colorpicker',
+                        label: 'Foreground color',
+                        id: 'fg',
+                        default: this.rgb(255, 255, 255)
+                    },{
+                        type: 'colorpicker',
+                        label: 'Background color',
+                        id: 'bg',
+                        default: this.rgb(153, 0, 51)
+                    }
+                ],
+                callback: (feedback, bank) => {
+                    return this.feedbackStatus(feedback, bank, 'mute_matrix', 0x6C);
                 }
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_matrix', 0x6C);
             }
         }
         

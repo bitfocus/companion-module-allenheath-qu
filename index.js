@@ -1,12 +1,17 @@
 /**
  * 
  * Companion instance class for the Allen & Heath QU.
- * Version 1.0.0
+ * Version 1.0.1
  * Author Max Kiusso <max@kiusso.net>
  *
  * Based on allenheath-dlive module by Andrew Broughton
  *
- * 2021-03-01  Version 1.0.0
+ * 2021-03-01	Version 1.0.0
+ *
+ * 2021-03-04	Version 1.0.1
+ *				- Fix level
+ *				- New variables
+ *				- Presets
  */
 
 let tcp             = require('../../tcp');
@@ -14,7 +19,7 @@ let instance_skel   = require('../../instance_skel');
 let actions         = require('./actions');
 let feedbacks       = require('./feedbacks');
 let variables       = require('./variables');
-//let presets         = require('./presets');
+let presets         = require('./presets');
 
 
 const level         = require('./level.json');
@@ -30,7 +35,8 @@ class instance extends instance_skel {
 		Object.assign(this, {
 			...variables,
 			...actions,
-			...feedbacks
+			...feedbacks,
+			...presets
 		});
 	}
 
@@ -49,6 +55,12 @@ class instance extends instance_skel {
     variables(system) {
 
         this.setVariableDefinitions(this.getVariables());
+    
+    }
+    
+    presets(system) {
+
+        this.setPresetDefinitions(this.getPresets());
     
     }
 
@@ -152,9 +164,9 @@ class instance extends instance_skel {
 			case 'mutegrp_assign_fxr':
 			case 'dcagrp_assign_fxr':
 			case 'pafl_fx_return':
-			case 'sendlev_fxr_mix':
-			case 'sendlev_fxr_group':
-			case 'sendlev_fxr_fxs':
+			case 'sendlev_fx_return_mix':
+			case 'sendlev_fx_return_group':
+			case 'sendlev_fx_return_fxs':
 				CH = 0x08;
 				break;
 				
@@ -204,7 +216,9 @@ class instance extends instance_skel {
 			}
 			
 			if (action.action.slice(0, 5) == 'level') {
-				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x17, 0xB0, 0x06, parseInt(opt.level), 0xB0, 0x26, 0x07 ]) ];
+				let lev = parseInt(opt.level);
+				if ( lev >= 998 ) lev = self.getStepLevel(action.action, CH + channel, lev);
+				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x17, 0xB0, 0x06, lev, 0xB0, 0x26, 0x07 ]) ];
 			}
 			
 			if (action.action.slice(0, 3) == 'pan') {
@@ -232,7 +246,9 @@ class instance extends instance_skel {
 			}
 			
 			if (action.action.slice(0, 7) == 'sendlev') {
-				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x20, 0xB0, 0x06, parseInt(opt.level), 0xB0, 0x26, parseInt(opt.mix) ]) ];
+				let lev = parseInt(opt.level);
+				if ( lev >= 998 ) lev = self.getStepLevel(action.action, CH + channel, lev, parseInt(opt.mix));
+				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x20, 0xB0, 0x06, lev, 0xB0, 0x26, parseInt(opt.mix) ]) ];
 			}
 			
 			if (action.action.slice(0, 9) == 'preloc_48') {
@@ -246,6 +262,58 @@ class instance extends instance_skel {
 				this.midiSocket.write(cmd.buffers[i]);
 			}
 		}
+	}
+	
+	getStepLevel(act, ch, step, mix = 999) {
+		var self = this;
+		var db;
+		var dc = '999';
+		
+		self.getVariable(`${act}_${ch}` + (mix != 999 ? `_${mix}` : ''), function(res) {
+            if (res !== undefined) {
+            	if ( res == '-inf' ) res = -56;
+            	res = parseFloat(res.toString().replace(/^[\+]?/g, '')) + (step == 998 ? -1 : 1);
+            	
+            	if ( res > -45 && res < -40 ) res = step == 998 ? -45 : -40;
+            	if ( res > -50 && res < -45 ) res = step == 998 ? -50 : -45;
+            	if ( res > -55 && res < -50 ) res = step == 998 ? -55 : -50; 
+            	if ( res < -55 ) res = step == 998 ? '-inf' : -55;
+            	
+            	if ( res != '-inf' ) {
+	                let lv = level.level;
+	                for ( let i = 0; i < lv.length; i++ ) {
+	                	let j = i + 1 < lv.length ? i + 1 : 0;
+	                	let v1 = parseFloat(lv[i][0].replace(/^[\+]?/g, ''));
+			            let v2 = parseInt(lv[i][1], 16);
+			            
+			            if ( (j == 0 && res < v1) || (j == 1 && res > v1) || (res == v1) ) {
+			            	dc = v1;
+			            	db = v2;
+			            	break;
+			            } else if ( j > 0 ) {
+			            	let zx = parseFloat(lv[j][0].replace(/^[\+]?/g, ''));
+			            	
+			            	if ( v1 > res && res > zx ) {
+			            		if ( v1 - res <= res - zx ) {
+			            			dc = v1;
+			            			db = v2;
+			            		} else {
+			            			dc = zx;
+			            			db = parseInt(lv[j][1], 16);
+			            		}
+			            		break;
+			            	}
+			            }
+	                }
+	        	} else {
+		        	dc = res;
+		        	db = 0;
+		        }
+            }
+        });
+        
+        if ( dc != 999 ) self.setVariable(`${act}_${ch}` + (mix != 999 ? `_${mix}` : ''), dc);
+        return db;
 	}
 	
 	getChannel(ch) {
@@ -417,7 +485,8 @@ class instance extends instance_skel {
 		                    str += String.fromCharCode(vl[i]);
 		                }
 		                
-		                if ( str.charCodeAt(0) != 0 ) {
+		                if ( str.charCodeAt(0) != 0) {
+		                	//console.log(`${str} - ${vl[10]}`);
 		                	self.setVariable('ch_name_' + vl[10], str);
 		                }
 			    	}
@@ -470,7 +539,7 @@ class instance extends instance_skel {
             		if ( dt[1] == 99 && dt[5] == 23 ) {
             			let rt = self.getChannel(dt[2]);
             			
-            			self.setVariable(`level_${rt[0]}_${dt[2]}`, self.getLevel(dt[8]) + ' dB');
+            			self.setVariable(`level_${rt[0]}_${dt[2]}`, self.getLevel(dt[8]));
             		}
             		
             		/* Send Level */
@@ -478,7 +547,7 @@ class instance extends instance_skel {
             			let rt = self.getChannel(dt[2]);
             			let vx = self.getSend(dt[11]);
             			//console.log(`sendlev_${rt[0]}_${dt[2]}_${vx[0]}_${dt[11]} -> ${vl}`);
-            			self.setVariable(`sendlev_${rt[0]}_${dt[2]}_${vx[0]}_${dt[11]}`, self.getLevel(dt[8]) + ' dB');
+            			self.setVariable(`sendlev_${rt[0]}_${vx[0]}_${dt[2]}_${dt[11]}`, self.getLevel(dt[8]));
             		}
         		} 
 			}
@@ -598,6 +667,7 @@ class instance extends instance_skel {
 		this.variables();
 		this.actions();
         this.feedbacks();
+        this.presets();
 		this.init_tcp();
         
 	}
