@@ -193,25 +193,7 @@ class instance extends instance_skel {
 		if (cmd.buffers.length == 0) {
 			if (action.action.slice(0, 4) == 'mute') {
 				this.setVariable(action.action + '_' + (CH + channel), opt.mute ? true : false);
-                
-                system.emit('db_get', opt.mute ? 'bank_actions' : 'bank_release_actions', function(res) {
-                    for ( let pag in res ) {
-                        for ( let bnk in res[pag] ) {
-                            if ( typeof res[pag][bnk] == 'object' && Object.keys(res[pag][bnk]).length !== 0) {
-								for (let i in res[pag][bnk]) {
-									if ( res[pag][bnk][i]['instance'] == self.id && res[pag][bnk][i]['id'] == action.id ) {
-										system.emit('db_get', 'feedbacks', function(fdb) {
-											if (typeof fdb[pag][bnk] == 'object' && Object.keys(fdb[pag][bnk]).length !== 0) {
-												system.emit('feedback_check_bank', pag, bnk);
-											}
-										});
-									}
-								}
-                            }
-                        }
-                    }
-                });
-				
+                this.checkFeedbacks(action.action);
 				cmd.buffers = [ Buffer.from([ 0x90, CH + channel, opt.mute ? 0x7F : 0x3F, 0x80, CH + channel, 0x00 ]) ];
 			}
 			
@@ -495,6 +477,8 @@ class instance extends instance_skel {
             		dt = data.slice(b, (b + 6));
             		
             		if ( dt[2] > 0 ) {
+                		//this.getAllActions();
+                		
 	            		system.emit('db_get', 'bank_actions', function(res) {
 			                for ( let pag in res ) {
 	                            for ( let bnk in res[pag] ) {
@@ -515,15 +499,11 @@ class instance extends instance_skel {
 													case 'mute_mutegroup':	CH = 0x50; break;
 												}
 												
-												if ( parseInt(res[pag][bnk][i]['options']['channel']) == (CH - parseInt(dt[1])) ) {
+												if ( parseInt(res[pag][bnk][i]['options']['channel']) == (parseInt(dt[1]) - CH) ) {
 													system.emit('graphics_indicate_push', pag, bnk, dt[2] >= 64 ? true : false);
 													self.setVariable(res[pag][bnk][i]['action'] + '_' + dt[1], dt[2] >= 64 ? true : false);
 													
-													system.emit('db_get', 'feedbacks', function(fdb) {
-														if (typeof fdb[pag][bnk] == 'object' && Object.keys(fdb[pag][bnk]).length !== 0) {
-															system.emit('feedback_check_bank', pag, bnk);
-														}
-													});
+													self.checkFeedbacks(res[pag][bnk][i]['action']);
 												}
 											}
 										}
@@ -533,7 +513,7 @@ class instance extends instance_skel {
 						});
 					}
         		} else if ( data[b] == 176) {
-            		dt = data.slice(b, (b + 12));//JSON.parse(JSON.stringify(data))['data'].slice(b, (b + 12));
+            		dt = data.slice(b, (b + 12));
             		
             		/* Fader Level */
             		if ( dt[1] == 99 && dt[5] == 23 ) {
@@ -651,6 +631,7 @@ class instance extends instance_skel {
                 	//console.log(adat[ adat.length - 1]);
                 	if ( [247,254,0,7].includes(adat[ adat.length - 1]) ) {
 	                    this.getRemoteValue(adat);
+	                    //console.log(adat);
 	                    adat = [];
 	                }
                 }
@@ -669,7 +650,7 @@ class instance extends instance_skel {
         this.feedbacks();
         this.presets();
 		this.init_tcp();
-        
+		
 	}
 
 }

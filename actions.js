@@ -63,13 +63,23 @@ module.exports = {
 		}
 		
 		ch = 5;
-		for (let i = 4; i < qu['mtxCount'] + qu['mixStereo']; i++) {
-			this.CHOICES_MIX.push({ label: `Matrix ${ch}/${ch+1}`, id: i });
+		for (let i = 4; i < qu['mixCount'] + qu['mixStereo']; i++) {
+			this.CHOICES_MIX.push({ label: `Mix ${ch}/${ch+1}`, id: i });
 			ch = ch + 2;
 		}
 		
 		this.CHOICES_LR = [];
 		this.CHOICES_LR.push({ label: `LR`, id: 0 });
+		
+		this.CHOICES_MUTEGROUP = [];
+		for (let i = 0; i < qu['muteGroup']; i++) {
+			this.CHOICES_MUTEGROUP.push({ label: `MuteGroup ${i}`, id: i });
+		}
+		
+		this.CHOICES_DCA = [];
+		for (let i = 0; i < qu['dcaCount']; i++) {
+			this.CHOICES_DCA.push({ label: `DCA ${i}`, id: i });
+		}
 		
 		this.CHOICES_SCENES = [];
 		for (let i = 0; i < qu['sceneCount']; i++) {

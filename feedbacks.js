@@ -1,7 +1,10 @@
+const quconfig   = require('./quconfig.json');
+
 module.exports = {
     
 	getFeedbacks : function() {
         
+        var qu = quconfig['config'][this.config.model];
         let feedbacks = {};
 
         feedbacks['mute_input'] = {
@@ -18,10 +21,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'Input channel',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_INPUT_CHANNEL,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_input', 0x20);
+                return this.feedbackStatus(feedback, bank, 'mute_input_' + (parseInt(feedback.options.channel) + 0x20));
             }
         }
         
@@ -39,10 +49,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'Stereo channel',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_STEREO_CHANNEL,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_stereo', 0x40);
+                return this.feedbackStatus(feedback, bank, 'mute_stereo_' + (parseInt(feedback.options.channel) + 0x40));
             }
         }
         
@@ -60,10 +77,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'LR',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_LR,
+    				minChoicesForSearch: 99
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_lr', 0x67);
+                return this.feedbackStatus(feedback, bank, 'mute_lr_' + (parseInt(feedback.options.channel) + 0x67));
             }
         }
         
@@ -81,10 +105,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'Mix',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_MIX,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_mix', 0x60);
+                return this.feedbackStatus(feedback, bank, 'mute_mix_' + (parseInt(feedback.options.channel) + 0x60));
             }
         }
         
@@ -103,10 +134,17 @@ module.exports = {
                         label: 'Background color',
                         id: 'bg',
                         default: this.rgb(153, 0, 51)
-                    }
+                    },{
+        				type:    'dropdown',
+        				label:   'Group',
+        				id:      'channel',
+        				default: 0,
+        				choices: this.CHOICES_GROUP,
+        				minChoicesForSearch: 0
+        			}
                 ],
                 callback: (feedback, bank) => {
-                    return this.feedbackStatus(feedback, bank, 'mute_group', 0x68);
+                    return this.feedbackStatus(feedback, bank, 'mute_group_' + (parseInt(feedback.options.channel) + 0x68));
                 }
             }
         }
@@ -125,10 +163,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'FX Return',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_FX_RETURN,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_fx_return', 0x08);
+                return this.feedbackStatus(feedback, bank, 'mute_fx_return_' + (parseInt(feedback.options.channel) + 0x08));
             }
         }
         
@@ -146,10 +191,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'FX Send',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_FX_SEND,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_fx_send', 0x00);
+                return this.feedbackStatus(feedback, bank, 'mute_fx_send_' + (parseInt(feedback.options.channel) + 0x00));
             }
         }
         
@@ -168,10 +220,17 @@ module.exports = {
                         label: 'Background color',
                         id: 'bg',
                         default: this.rgb(153, 0, 51)
-                    }
+                    },{
+        				type:    'dropdown',
+        				label:   'Matrix',
+        				id:      'channel',
+        				default: 0,
+        				choices: this.CHOICES_MATRIX,
+        				minChoicesForSearch: 0
+        			}
                 ],
                 callback: (feedback, bank) => {
-                    return this.feedbackStatus(feedback, bank, 'mute_matrix', 0x6C);
+                    return this.feedbackStatus(feedback, bank, 'mute_matrix_' + (parseInt(feedback.options.channel) + 0x6C));
                 }
             }
         }
@@ -190,10 +249,17 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'DCA',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_DCA,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_dca', 0x10);
+                return this.feedbackStatus(feedback, bank, 'mute_dcs_' + (parseInt(feedback.options.channel) + 0x10));
             }
         }
         
@@ -211,48 +277,33 @@ module.exports = {
                     label: 'Background color',
                     id: 'bg',
                     default: this.rgb(153, 0, 51)
-                }
+                },{
+    				type:    'dropdown',
+    				label:   'MuteGroup',
+    				id:      'channel',
+    				default: 0,
+    				choices: this.CHOICES_MUTEGROUP,
+    				minChoicesForSearch: 0
+    			}
             ],
             callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_mutegroup', 0x50);
+                return this.feedbackStatus(feedback, bank, 'mute_mutegroup_' + (parseInt(feedback.options.channel) + 0x50));
             }
         }
         
         return feedbacks;
 	},
     
-    feedbackStatus : function(feedback, bank, typ, ofs) {
+    feedbackStatus : function(feedback, bank, val) {
         var ret = {};
-        var pg, bk, ii, strip;
         
-        system.emit('db_get', 'feedbacks', function(res) {
-            for ( let pag in res ) {
-                for ( let bnk in res[pag] ) {
-                    if ( typeof res[pag][bnk] == 'object' && Object.keys(res[pag][bnk]).length !== 0 ) {
-						for (let i in res[pag][bnk]) {
-							if ( res[pag][bnk][i]['id'] == feedback.id ) {
-								pg = pag;
-								bk = bnk;
-								ii = i;
-							}
-						}
-                    }
-                }
-            }
-        });
-        
-        system.emit('db_get', 'bank_actions', function(res) {
-            strip = res[pg][bk][ii]['options']['channel'];
-        });
-        
-        this.getVariable(typ + '_' + (ofs + parseInt(strip)), function(res) {
+        this.getVariable(val, function(res) {
             if (res) {
                     ret = { color: feedback.options.fg, bgcolor: feedback.options.bg };
             } else {
                     ret = { color: bank.color, bgcolor: bank.bgcolor };
             }
         });
-        
         
         return ret;
     }

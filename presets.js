@@ -26,7 +26,7 @@ module.exports = {
 						{
 							action: typ,
 							options: {
-								strip: i,
+								channel: i,
 								mute: true
 							}
 						}
@@ -35,14 +35,17 @@ module.exports = {
 						{
 							action: typ,
 							options: {
-								strip: i,
+								channel: i,
 								mute: false
 							}
 						}
 					],
 					feedbacks: [
 						{
-							type: typ
+							type: typ,
+							options: {
+								channel: i
+							}
 						}
 					]
 				};
