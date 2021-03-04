@@ -5,7 +5,7 @@ See [HELP.md](HELP.md) and [LICENSE](LICENSE) for more information about this mo
 This module for the Allen & Heath QU can control parameters of the console 
 via MIDI commands over IP
 
-Created by Max Kiusso in 2021 from original allenheath-dlive module. 
+Created by Max Kiusso in 2021. 
 
 
-Current Version 1.0.0
+Current Version 1.0.1

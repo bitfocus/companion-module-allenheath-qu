@@ -49,8 +49,8 @@ module.exports = {
             this.setVariable(`ch_name_${96 + i}`, `Mix ${i + 1}`);
 		}
 		
+		let ca = 5;
 		for (let i = qu['mixCount']; i < qu['mixStereo'] + qu['mixCount']; i++) {
-		    let ca = 5;
 			variables.push({
                label: `Mix ${ca}/${ca + 1} Level`,
                name:  `level_mix_${96 + i}`
@@ -139,6 +139,15 @@ module.exports = {
             });
             
             this.setVariable(`ch_name_${16 + i}`, `DCA ${i + 1}`);
+		}
+		
+		for (let i = 0; i < qu['muteGroup']; i++) {
+            variables.push({
+               label: `MuteGroup ${i + 1} Name`,
+               name:  `ch_name_${80 + i}`
+            });
+            
+            this.setVariable(`ch_name_${80 + i}`, `MuteGrp ${i + 1}`);
 		}
 		
         return variables;

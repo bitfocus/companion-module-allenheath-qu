@@ -14,12 +14,22 @@ Controls the Allen & Heath QU.
 *	Scene Recall
 *	Preamp (local) - 48V
 *	MMC Transport Control
-*	Feedbacks - Mute, Fader level, Name
+
+## Special functions:
+*	Feedbacks - Mutes, Fader level, Send level, Name
+*	Presets - Mutes
 
 
 Created by referring to "QU Midi Protocol v.1.9" manual.
 
-Current version: 1.0.0
+Current version: 1.0.1
+
+Start version: 1.0.0
+
+New in v.1.0.1
+* Fix level
+* New variables
+* Presets
 
 ## Configuring:
 
@@ -27,10 +37,61 @@ Current version: 1.0.0
 First step after adding QU instance is to setting it up:
 
 *	Name: 					the name you want
-*	Target IP:				IP to reach your SQ (needs on the same net)
+*	Target IP:				IP to reach your QU (needs on the same net)
 *	Model:					your QU model
 
 ## How to:
 
-### Fader level, Send level and Name on button
+### Fader / Send level step increment
+*	There are two specifc values on level dropdown menu (at the top) when you configuring fader / send level.
+
+### Fader level and Name on button
 When you configure a button, in button text start typing <b>$(</b> then system will suggests you all variables you can use.
+
+All variable/text can be concats to produce complex string. Use <b>\n</b> to make new line.
+Example:
+
+	$(QU:ch_name_32)\n$(QU:level_input_32) dB
+	
+will produce a string like:
+
+	  CH 1
+	 -8 dB
+	 
+If you set a name for channel 1 (ex: Singer) the result will be like:
+
+	Singer
+	-8 dB
+
+### Send level
+It works like a fader level but you have to compose variable name (no suggests) following this indications:
+
+*	$(QU:sendlev_TYPE_CH_TO)
+	
+where:
+
+*	TYPE is a type of level
+*	CH channel from
+*	TO channel to
+	
+Referring to follow tables:
+
+TYPE (ex: input_mix => from INPUT to MIX)
+
+*	input_mix / input_group
+*	stereo_mix / stereo_group
+*	fx_return_mix / fx_return_group / fx_return_fxs
+	
+CH (ex: 32 => CH 1; 65 => ST 2; 9 => FX 2)
+
+*	input		32 -> 63
+*	stereo		64 -> 66
+*	fx_return	8  -> 11
+	
+TO (ex: 0 => MIX 1; 5 => MIX 7/8; 17 => FX Send 2)
+
+*	mix			0  -> 6
+*	group		8  -> 11		(only in mix mode)
+*	fxs			16 -> 19
+	
+Example: if you want the level of "Stereo 3 into Group 3/4", write <b>$(QU:sendlev_stereo_group_66_9)</b>
