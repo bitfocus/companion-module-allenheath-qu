@@ -1,6 +1,6 @@
 {
 	"name": "allenheath-qu",
-	"version": "1.0.1",
+	"version": "1.0.3",
 	"api_version": "1.0.0",
 	"keywords": ["QU16","QU24","QU32"],
 	"manufacturer": "Allen & Heath",
