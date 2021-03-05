@@ -520,7 +520,7 @@ class instance extends instance_skel {
             		/* PAFL */
 			        if ( dt[1] == 99 && dt[5] == 81 ) {
 			        	this.fdbState['pafl_' + dt[2]] = dt[8] == 1 ? true : false;
-						self.checkFeedbacks( 'pafl_' + this.getChannel(dt[2])[0] );
+						    self.checkFeedbacks( 'pafl_' + this.getChannel(dt[2])[0] );
 			        }
         		} 
 			}
