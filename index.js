@@ -43,8 +43,7 @@ class instance extends instance_skel {
 			...presets
 		});
 		
-		this.muteState = {};
-		this.paflState = {};
+		this.fdbState = {};
 	}
 
 	actions(system) {
@@ -200,13 +199,13 @@ class instance extends instance_skel {
 		if (cmd.buffers.length == 0) {
 			if (action.action.slice(0, 4) == 'mute') {
 				if ( parseInt(opt.mute) > 0 ) {
-					this.muteState['mute_' + (CH + channel)] = parseInt(opt.mute) == 1 ? true : false;
+					this.fdbState['mute_' + (CH + channel)] = parseInt(opt.mute) == 1 ? true : false;
 				} else {
-					this.muteState['mute_' + (CH + channel)] = this.muteState['mute_' + (CH + channel)] == true ? false : true;
+					this.fdbState['mute_' + (CH + channel)] = this.fdbState['mute_' + (CH + channel)] == true ? false : true;
 				}
 				
                 this.checkFeedbacks(action.action);
-				cmd.buffers = [ Buffer.from([ 0x90, CH + channel, this.muteState['mute_' + (CH + channel)] ? 0x7F : 0x3F, 0x80, CH + channel, 0x00 ]) ];
+				cmd.buffers = [ Buffer.from([ 0x90, CH + channel, this.fdbState['mute_' + (CH + channel)] ? 0x7F : 0x3F, 0x80, CH + channel, 0x00 ]) ];
 			}
 			
 			if (action.action.slice(0, 5) == 'level') {
@@ -237,14 +236,14 @@ class instance extends instance_skel {
 			
 			if (action.action.slice(0, 4) == 'pafl') {
 				if ( parseInt(opt.pafl) > 0 ) {
-					this.paflState['pafl_' + (CH + channel)] = parseInt(opt.pafl) == 1 ? true : false;
+					this.fdbState['pafl_' + (CH + channel)] = parseInt(opt.pafl) == 1 ? true : false;
 				} else {
-					this.paflState['pafl_' + (CH + channel)] = this.paflState['pafl_' + (CH + channel)] == true ? false : true;
+					this.fdbState['pafl_' + (CH + channel)] = this.fdbState['pafl_' + (CH + channel)] == true ? false : true;
 				}
 				
                 this.checkFeedbacks(action.action);
                 
-				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x51, 0xB0, 0x06, this.paflState['pafl_' + (CH + channel)] ? 1 : 0, 0xB0, 0x26, 0x07 ]) ];
+				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x51, 0xB0, 0x06, this.fdbState['pafl_' + (CH + channel)] ? 1 : 0, 0xB0, 0x26, 0x07 ]) ];
 			}
 			
 			if (action.action.slice(0, 7) == 'sendlev') {
@@ -497,7 +496,7 @@ class instance extends instance_skel {
             		dt = data.slice(b, (b + 6));
             		
             		if ( dt[2] > 0 ) {
-                		this.muteState['mute_' + dt[1]] = dt[2] >= 64 ? true : false;
+                		this.fdbState['mute_' + dt[1]] = dt[2] >= 64 ? true : false;
 						self.checkFeedbacks( 'mute_' + this.getChannel(dt[1])[0] );
 					}
         		} else if ( data[b] == 176) {
@@ -520,8 +519,8 @@ class instance extends instance_skel {
             		
             		/* PAFL */
 			        if ( dt[1] == 99 && dt[5] == 81 ) {
-			        	this.paflState['pafl_' + dt[2]] = dt[8] == 1 ? true : false;
-						self.checkFeedbacks( 'pafl_' + this.getChannel(dt[2])[0] );
+			        	this.fdbState['pafl_' + dt[2]] = dt[8] == 1 ? true : false;
+						    self.checkFeedbacks( 'pafl_' + this.getChannel(dt[2])[0] );
 			        }
         		} 
 			}
