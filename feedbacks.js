@@ -73,7 +73,7 @@ module.exports = {
     feedbackStatus : function(feedback, bank, val) {
         var ret = {};
         
-        if ( this.muteState[val] ) {
+        if ( this.fdbState[val] ) {
             ret = { color: feedback.options.fg, bgcolor: feedback.options.bg };
         } else {
             ret = { color: bank.color, bgcolor: bank.bgcolor };
