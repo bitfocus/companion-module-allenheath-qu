@@ -86,7 +86,7 @@ module.exports = {
 			this.CHOICES_SCENES.push({ label: `SCENE ${i + 1}`, id: i });
 		}
 
-		this.muteOptions = (name, qty, ofs, st = 0, pafl = false) => {
+		this.muteOptions = (name, qty, ofs, st = 0) => {
 			var i;
 			let ch = 1;
 			this.CHOICES = [];
@@ -112,10 +112,45 @@ module.exports = {
 				choices: this.CHOICES,
 				minChoicesForSearch: 0
 			},{
-				type:    'checkbox',
-				label:   pafl ? 'Select' : 'Mute',
-				id:      pafl ? 'select' : 'mute',
-				default: true
+				type:    'dropdown',
+				label:   'Mute',
+				id:		 'mute',
+				default: 0,
+				choices: [{label: 'Toggle', id: 0}, {label: 'On', id: 1},{label: 'Off', id: 2}]
+			}]
+		}
+		
+		this.paflOptions = (name, qty, ofs, st = 0) => {
+			var i;
+			let ch = 1;
+			this.CHOICES = [];
+			for (i = 1; i <= qty; i++) {
+				let ele = st < 99 ? i : `${ch}/${ch+1}`;
+				this.CHOICES.push({ label: `${name} ${ele}`, id: i + ofs });
+				ch = ch + 2;
+			}
+			
+			if (st > 0 && st < 99) {
+				let ch = 5;
+				for (let j = i; j <= qty + st; j++) { 
+					this.CHOICES.push({ label: `${name} ${ch}/${ch+1}`, id: j + ofs });
+					ch = ch + 2;
+				}
+			}
+			
+			return [{
+				type:    'dropdown',
+				label:   name,
+				id:      'channel',
+				default: 1 + ofs,
+				choices: this.CHOICES,
+				minChoicesForSearch: 0
+			},{
+				type:    'dropdown',
+				label:   'PAFL',
+				id:		 'pafl',
+				default: 0,
+				choices: [{label: 'Toggle', id: 0}, {label: 'On', id: 1},{label: 'Off', id: 2}]
 			}]
 		}
 		
@@ -568,41 +603,41 @@ module.exports = {
 		/* PAFL Select */
 		actions['pafl_input'] = {
 			label: 'PAFL Input',
-			options: this.muteOptions('Input Channel', qu['chCount'], -1, 0, true)
+			options: this.paflOptions('Input Channel', qu['chCount'], -1, 0)
 		};
 		actions['pafl_stereo'] = {
 			label: 'PAFL Stereo',
-			options: this.muteOptions('Stereo Channel', qu['chStereo'], -1, 0, true)
+			options: this.paflOptions('Stereo Channel', qu['chStereo'], -1, 0)
 		};
 		actions['pafl_lr'] = {
 			label: 'PAFL LR',
-			options: this.muteOptions('LR', 1, -1, 0, true)
+			options: this.paflOptions('LR', 1, -1, 0)
 		};
 		actions['pafl_mix'] = {
 			label: 'PAFL Mix',
-			options: this.muteOptions('Mix', qu['mixCount'], -1, qu['mixStereo'], 0, true)
+			options: this.paflOptions('Mix', qu['mixCount'], -1, qu['mixStereo'], 0)
 		}
 		actions['pafl_fx_send'] = {
 			label: 'PAFL FX Send',
-			options: this.muteOptions('FX Send', qu['fxsCount'], -1, 0, true)
+			options: this.paflOptions('FX Send', qu['fxsCount'], -1, 0)
 		};
 		actions['pafl_fx_return'] = {
 			label: 'PAFL FX Return',
-			options: this.muteOptions('FX Return', qu['fxrCount'], -1, 0, true)
+			options: this.paflOptions('FX Return', qu['fxrCount'], -1, 0)
 		};
 		actions['pafl_dca'] = {
 			label: 'PAFL DCA',
-			options: this.muteOptions('DCA', qu['dcaCount'], -1, 0, true)
+			options: this.paflOptions('DCA', qu['dcaCount'], -1, 0)
 		};
 		
 		if (this.config.model != 'QU16') {
 			actions['pafl_group'] = {
 				label: 'PAFL Group',
-				options: this.muteOptions('Group', qu['grpCount'], -1, 99, true)
+				options: this.paflOptions('Group', qu['grpCount'], -1, 99)
 			}
 			actions['pafl_matrix'] = {
 				label: 'PAFL Matrix',
-				options: this.muteOptions('Matrix', qu['mtxCount'], -1, 99, true)
+				options: this.paflOptions('Matrix', qu['mtxCount'], -1, 99)
 			}
 		}
 		/**/

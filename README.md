@@ -7,5 +7,6 @@ via MIDI commands over IP
 
 Created by Max Kiusso in 2021. 
 
+Last update (d/m/y): 05/03/2021
 
-Current Version 1.0.1
+Current Version 1.0.3

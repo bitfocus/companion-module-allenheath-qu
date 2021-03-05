@@ -5,24 +5,25 @@ Controls the Allen & Heath QU.
 ## Functions:
 *	Mutes
 *	Faders and Pan
-*	Mix and FX sends - Level, Pan, Assign
-*	Matrix sends - Level, Pan, Assign
-*	Groups - Assign (Level, Pan in mix mode)
-*	Mute Groups - Assign, Mute
-*	DCA Groups - Assign, Level, Mute
+*	Mix and FX sends: Level, Pan, Assign
+*	Matrix sends: Level, Pan, Assign
+*	Groups: Assign (Level, Pan in mix mode)
+*	Mute Groups: Assign, Mute
+*	DCA Groups: Assign, Level, Mute
 *	PAFL select
 *	Scene Recall
-*	Preamp (local) - 48V
+*	Preamp (local): 48V
 *	MMC Transport Control
 
 ## Special functions:
-*	Feedbacks - Mutes, Fader level, Send level, Name
-*	Presets - Mutes
-
+*	Feedbacks: Mutes, PAFL
+*	Presets: Mutes, PAFL
+*	Variables: Fader level, Send level, Channel name
+*	Step level increment: Fader level, Send level 
 
 Created by referring to "QU Midi Protocol v.1.9" manual.
 
-Current version: 1.0.1
+Current version: 1.0.3
 
 Start version: 1.0.0
 
@@ -30,6 +31,12 @@ New in v.1.0.1
 * Fix level
 * New variables
 * Presets
+
+New in v.1.0.3
+* Fix feedbacks
+* Remove all system.emit
+* Add PAFL feedbacks
+* Add PAFL presets
 
 ## Configuring:
 
@@ -45,7 +52,7 @@ First step after adding QU instance is to setting it up:
 ### Fader / Send level step increment
 *	There are two specifc values on level dropdown menu (at the top) when you configuring fader / send level.
 
-### Fader level and Name on button
+### Fader level and Channel name on button
 When you configure a button, in button text start typing <b>$(</b> then system will suggests you all variables you can use.
 
 All variable/text can be concats to produce complex string. Use <b>\n</b> to make new line.
@@ -58,7 +65,7 @@ will produce a string like:
 	  CH 1
 	 -8 dB
 	 
-If you set a name for channel 1 (ex: Singer) the result will be like:
+If you set a name (from console) for channel 1 (ex: Singer) the result will be like:
 
 	Singer
 	-8 dB

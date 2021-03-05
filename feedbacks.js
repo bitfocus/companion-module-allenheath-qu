@@ -5,291 +5,67 @@ module.exports = {
 	getFeedbacks : function() {
         
         var qu = quconfig['config'][this.config.model];
-        let feedbacks = {};
-
-        feedbacks['mute_input'] = {
-            label: 'Mute Input',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'Input channel',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_INPUT_CHANNEL,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_input_' + (parseInt(feedback.options.channel) + 0x20));
-            }
-        }
+        var feedbacks = {};
         
-        feedbacks['mute_stereo'] = {
-            label: 'Mute Stereo',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'Stereo channel',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_STEREO_CHANNEL,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_stereo_' + (parseInt(feedback.options.channel) + 0x40));
-            }
-        }
-        
-        feedbacks['mute_lr'] = {
-            label: 'Mute LR',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'LR',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_LR,
-    				minChoicesForSearch: 99
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_lr_' + (parseInt(feedback.options.channel) + 0x67));
-            }
-        }
-        
-        feedbacks['mute_mix'] = {
-            label: 'Mute Mix',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'Mix',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_MIX,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_mix_' + (parseInt(feedback.options.channel) + 0x60));
-            }
-        }
-        
-        if (this.config.model != 'QU16') {
-            feedbacks['mute_group'] = {
-                label: 'Mute Group',
+        const createtFdb = (nam, typ, lab, col, chs, ofs) => {
+            let fg = this.rgb(col['fg'][0], col['fg'][1], col['fg'][2]);
+            let bg = this.rgb(col['bg'][0], col['bg'][1], col['bg'][2]);
+            
+            feedbacks[nam] = {
+                label: `${typ} ${lab}`,
                 description: 'Change colour',
                 options: [
                     {
                         type: 'colorpicker',
                         label: 'Foreground color',
                         id: 'fg',
-                        default: this.rgb(255, 255, 255)
+                        default: fg
                     },{
                         type: 'colorpicker',
                         label: 'Background color',
                         id: 'bg',
-                        default: this.rgb(153, 0, 51)
+                        default: bg
                     },{
         				type:    'dropdown',
-        				label:   'Group',
+        				label:   lab,
         				id:      'channel',
         				default: 0,
-        				choices: this.CHOICES_GROUP,
+        				choices: chs,
         				minChoicesForSearch: 0
         			}
                 ],
                 callback: (feedback, bank) => {
-                    return this.feedbackStatus(feedback, bank, 'mute_group_' + (parseInt(feedback.options.channel) + 0x68));
+                    return this.feedbackStatus(feedback, bank, `${typ.toLowerCase()}_` + (parseInt(feedback.options.channel) + ofs));
                 }
             }
         }
         
-        feedbacks['mute_fx_return'] = {
-            label: 'Mute FX Return',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'FX Return',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_FX_RETURN,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_fx_return_' + (parseInt(feedback.options.channel) + 0x08));
-            }
+        /* Mute */
+        createtFdb('mute_input', 'Mute', 'Input', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_INPUT_CHANNEL, 0x20);
+        createtFdb('mute_stereo', 'Mute', 'Stereo', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_STEREO_CHANNEL, 0x40);
+        createtFdb('mute_lr', 'Mute', 'LR', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_LR, 0x67);
+        createtFdb('mute_mix', 'Mute', 'Mix', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_MIX, 0x60);
+        createtFdb('mute_fx_return', 'Mute', 'FX Return', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_FX_RETURN, 0x08);
+        createtFdb('mute_fx_send', 'Mute', 'FX Send', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_FX_SEND, 0x00);
+        if ( this.config.model != 'QU16' ) {
+            createtFdb('mute_group', 'Mute', 'Group', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_GROUP, 0x68);
+            createtFdb('mute_matrix', 'Mute', 'Matrix', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_MATRIX, 0x6C);
         }
+        createtFdb('mute_dca', 'Mute', 'DCA', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_DCA, 0x10);
+        createtFdb('mute_mutegroup', 'Mute', 'MuteGroup', {'fg':[255, 255, 255], 'bg':[153, 0, 51]}, this.CHOICES_MUTEGROUP, 0x50);
         
-        feedbacks['mute_fx_send'] = {
-            label: 'Mute FX Send',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'FX Send',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_FX_SEND,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_fx_send_' + (parseInt(feedback.options.channel) + 0x00));
-            }
+        /* PAFL */
+        createtFdb('pafl_input', 'PAFL', 'Input', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_INPUT_CHANNEL, 0x20);
+        createtFdb('pafl_stereo', 'PAFL', 'Stereo', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_STEREO_CHANNEL, 0x40);
+        createtFdb('pafl_lr', 'PAFL', 'LR', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_LR, 0x67);
+        createtFdb('pafl_mix', 'PAFL', 'Mix', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_MIX, 0x60);
+        createtFdb('pafl_fx_return', 'PAFL', 'FX Return', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_FX_RETURN, 0x08);
+        createtFdb('pafl_fx_send', 'PAFL', 'FX Send', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_FX_SEND, 0x00);
+        if ( this.config.model != 'QU16' ) {
+            createtFdb('pafl_group', 'PAFL', 'Group', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_GROUP, 0x68);
+            createtFdb('pafl_matrix', 'PAFL', 'Matrix', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_MATRIX, 0x6C);
         }
-        
-        if (this.config.model != 'QU16') {
-            feedbacks['mute_matrix'] = {
-                label: 'Mute Matrix',
-                description: 'Change colour',
-                options: [
-                    {
-                        type: 'colorpicker',
-                        label: 'Foreground color',
-                        id: 'fg',
-                        default: this.rgb(255, 255, 255)
-                    },{
-                        type: 'colorpicker',
-                        label: 'Background color',
-                        id: 'bg',
-                        default: this.rgb(153, 0, 51)
-                    },{
-        				type:    'dropdown',
-        				label:   'Matrix',
-        				id:      'channel',
-        				default: 0,
-        				choices: this.CHOICES_MATRIX,
-        				minChoicesForSearch: 0
-        			}
-                ],
-                callback: (feedback, bank) => {
-                    return this.feedbackStatus(feedback, bank, 'mute_matrix_' + (parseInt(feedback.options.channel) + 0x6C));
-                }
-            }
-        }
-        
-        feedbacks['mute_dca'] = {
-            label: 'Mute DCA',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'DCA',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_DCA,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_dcs_' + (parseInt(feedback.options.channel) + 0x10));
-            }
-        }
-        
-        feedbacks['mute_mutegroup'] = {
-            label: 'Mute MuteGroup',
-            description: 'Change colour',
-            options: [
-                {
-                    type: 'colorpicker',
-                    label: 'Foreground color',
-                    id: 'fg',
-                    default: this.rgb(255, 255, 255)
-                },{
-                    type: 'colorpicker',
-                    label: 'Background color',
-                    id: 'bg',
-                    default: this.rgb(153, 0, 51)
-                },{
-    				type:    'dropdown',
-    				label:   'MuteGroup',
-    				id:      'channel',
-    				default: 0,
-    				choices: this.CHOICES_MUTEGROUP,
-    				minChoicesForSearch: 0
-    			}
-            ],
-            callback: (feedback, bank) => {
-                return this.feedbackStatus(feedback, bank, 'mute_mutegroup_' + (parseInt(feedback.options.channel) + 0x50));
-            }
-        }
+        createtFdb('pafl_dca', 'PAFL', 'DCA', {'fg':[0,0,0], 'bg':[255, 153, 51]}, this.CHOICES_DCA, 0x10);
         
         return feedbacks;
 	},
@@ -297,13 +73,11 @@ module.exports = {
     feedbackStatus : function(feedback, bank, val) {
         var ret = {};
         
-        this.getVariable(val, function(res) {
-            if (res) {
-                    ret = { color: feedback.options.fg, bgcolor: feedback.options.bg };
-            } else {
-                    ret = { color: bank.color, bgcolor: bank.bgcolor };
-            }
-        });
+        if ( this.muteState[val] ) {
+            ret = { color: feedback.options.fg, bgcolor: feedback.options.bg };
+        } else {
+            ret = { color: bank.color, bgcolor: bank.bgcolor };
+        }
         
         return ret;
     }

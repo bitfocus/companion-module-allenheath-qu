@@ -1,10 +1,8 @@
 /**
  * 
  * Companion instance class for the Allen & Heath QU.
- * Version 1.0.1
+ * Version 1.0.3
  * Author Max Kiusso <max@kiusso.net>
- *
- * Based on allenheath-dlive module by Andrew Broughton
  *
  * 2021-03-01	Version 1.0.0
  *
@@ -12,6 +10,12 @@
  *				- Fix level
  *				- New variables
  *				- Presets
+ *
+ * 2021-03-05	Version 1.0.3
+ *				- Fix feedbacks
+ * 				- Remove all system.emit
+ *				- Add PAFL feedbacks
+ *				- Add PAFL presets
  */
 
 let tcp             = require('../../tcp');
@@ -38,6 +42,9 @@ class instance extends instance_skel {
 			...feedbacks,
 			...presets
 		});
+		
+		this.muteState = {};
+		this.paflState = {};
 	}
 
 	actions(system) {
@@ -192,9 +199,14 @@ class instance extends instance_skel {
 
 		if (cmd.buffers.length == 0) {
 			if (action.action.slice(0, 4) == 'mute') {
-				this.setVariable(action.action + '_' + (CH + channel), opt.mute ? true : false);
+				if ( parseInt(opt.mute) > 0 ) {
+					this.muteState['mute_' + (CH + channel)] = parseInt(opt.mute) == 1 ? true : false;
+				} else {
+					this.muteState['mute_' + (CH + channel)] = this.muteState['mute_' + (CH + channel)] == true ? false : true;
+				}
+				
                 this.checkFeedbacks(action.action);
-				cmd.buffers = [ Buffer.from([ 0x90, CH + channel, opt.mute ? 0x7F : 0x3F, 0x80, CH + channel, 0x00 ]) ];
+				cmd.buffers = [ Buffer.from([ 0x90, CH + channel, this.muteState['mute_' + (CH + channel)] ? 0x7F : 0x3F, 0x80, CH + channel, 0x00 ]) ];
 			}
 			
 			if (action.action.slice(0, 5) == 'level') {
@@ -224,7 +236,15 @@ class instance extends instance_skel {
 			}
 			
 			if (action.action.slice(0, 4) == 'pafl') {
-				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x51, 0xB0, 0x06, opt.select ? 1 : 0, 0xB0, 0x26, 0x07 ]) ];
+				if ( parseInt(opt.pafl) > 0 ) {
+					this.paflState['pafl_' + (CH + channel)] = parseInt(opt.pafl) == 1 ? true : false;
+				} else {
+					this.paflState['pafl_' + (CH + channel)] = this.paflState['pafl_' + (CH + channel)] == true ? false : true;
+				}
+				
+                this.checkFeedbacks(action.action);
+                
+				cmd.buffers = [ Buffer.from([ 0xB0, 0x63, CH + channel, 0xB0, 0x62, 0x51, 0xB0, 0x06, this.paflState['pafl_' + (CH + channel)] ? 1 : 0, 0xB0, 0x26, 0x07 ]) ];
 			}
 			
 			if (action.action.slice(0, 7) == 'sendlev') {
@@ -477,40 +497,8 @@ class instance extends instance_skel {
             		dt = data.slice(b, (b + 6));
             		
             		if ( dt[2] > 0 ) {
-                		//this.getAllActions();
-                		
-	            		system.emit('db_get', 'bank_actions', function(res) {
-			                for ( let pag in res ) {
-	                            for ( let bnk in res[pag] ) {
-	                                if ( typeof res[pag][bnk] == 'object' && Object.keys(res[pag][bnk]).length !== 0 ) {
-										for (let i in res[pag][bnk]) {
-											if ( res[pag][bnk][i]['instance'] == self.id && res[pag][bnk][i]['action'].slice(0,5) == 'mute_' && 'channel' in res[pag][bnk][i]['options'] ) {
-												let CH;
-												switch (res[pag][bnk][i]['action']) {
-													case 'mute_input' :		CH = 0x20; break;
-													case 'mute_stereo':		CH = 0x40; break;
-													case 'mute_lr':			CH = 0x67; break;
-													case 'mute_mix':		CH = 0x60; break;
-													case 'mute_group':		CH = 0x68; break;
-													case 'mute_matrix':		CH = 0x6C; break;
-													case 'mute_fx_send':	CH = 0x00; break;
-													case 'mute_fx_return':	CH = 0x08; break;
-													case 'mute_dca':		CH = 0x10; break;
-													case 'mute_mutegroup':	CH = 0x50; break;
-												}
-												
-												if ( parseInt(res[pag][bnk][i]['options']['channel']) == (parseInt(dt[1]) - CH) ) {
-													system.emit('graphics_indicate_push', pag, bnk, dt[2] >= 64 ? true : false);
-													self.setVariable(res[pag][bnk][i]['action'] + '_' + dt[1], dt[2] >= 64 ? true : false);
-													
-													self.checkFeedbacks(res[pag][bnk][i]['action']);
-												}
-											}
-										}
-									}
-								}
-							}
-						});
+                		this.muteState['mute_' + dt[1]] = dt[2] >= 64 ? true : false;
+						self.checkFeedbacks( 'mute_' + this.getChannel(dt[1])[0] );
 					}
         		} else if ( data[b] == 176) {
             		dt = data.slice(b, (b + 12));
@@ -529,6 +517,12 @@ class instance extends instance_skel {
             			//console.log(`sendlev_${rt[0]}_${dt[2]}_${vx[0]}_${dt[11]} -> ${vl}`);
             			self.setVariable(`sendlev_${rt[0]}_${vx[0]}_${dt[2]}_${dt[11]}`, self.getLevel(dt[8]));
             		}
+            		
+            		/* PAFL */
+			        if ( dt[1] == 99 && dt[5] == 81 ) {
+			        	this.muteState['pafl_' + dt[2]] = dt[8] == 1 ? true : false;
+						self.checkFeedbacks( 'pafl_' + this.getChannel(dt[2])[0] );
+			        }
         		} 
 			}
         }
