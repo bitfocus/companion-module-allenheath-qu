@@ -148,6 +148,12 @@ module.exports = {
 			this.setVariable(`ch_name_${80 + i}`, `MuteGrp ${i + 1}`)
 		}
 
+		variables.push({
+			label: `Current scene`,
+			name: `currentScene`,
+		})
+		this.setVariable(`currentScene`, 1)
+
 		return variables
 	},
 }

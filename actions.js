@@ -706,6 +706,21 @@ module.exports = {
 				},
 			],
 		}
+
+		actions['scene_step'] = {
+			label: 'Scene step',
+			options: [
+				{
+					type:	'number',
+					label:	'Scene +/-',
+					id:		'scene',
+					default:	1,
+					min:		-10,
+					max:		10,
+					required:	true,
+				},
+			],
+		}
 		/**/
 
 		actions['channel_name'] = {
