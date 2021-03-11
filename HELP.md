@@ -18,12 +18,13 @@ Controls the Allen & Heath QU.
 ## Special functions:
 *	Feedbacks: Mutes, PAFL
 *	Presets: Mutes, PAFL
-*	Variables: Fader level, Send level, Channel name
-*	Step level increment: Fader level, Send level 
+*	Variables: Fader level, Send level, Channel name, Current scene
+*	Step level increment: Fader level, Send level
+*	Scene step increment (+/- 10)
 
 Created by referring to "QU Midi Protocol v.1.9" manual.
 
-Current version: 1.0.3
+Current version: 1.0.4
 
 Start version: 1.0.0
 
@@ -37,6 +38,10 @@ New in v.1.0.3
 * Remove all system.emit
 * Add PAFL feedbacks
 * Add PAFL presets
+
+New in v.1.0.4
+* Add scene step
+* Add currentScene variable
 
 ## Configuring:
 
@@ -59,12 +64,12 @@ All variable/text can be concats to produce complex string. Use <b>\n</b> to mak
 Example:
 
 	$(QU:ch_name_32)\n$(QU:level_input_32) dB
-	
+
 will produce a string like:
 
 	  CH 1
 	 -8 dB
-	 
+
 If you set a name (from console) for channel 1 (ex: Singer) the result will be like:
 
 	Singer
@@ -74,13 +79,13 @@ If you set a name (from console) for channel 1 (ex: Singer) the result will be l
 It works like a fader level but you have to compose variable name (no suggests) following this indications:
 
 *	$(QU:sendlev_TYPE_CH_TO)
-	
+
 where:
 
 *	TYPE is a type of level
 *	CH channel from
 *	TO channel to
-	
+
 Referring to follow tables:
 
 TYPE (ex: input_mix => from INPUT to MIX)
@@ -88,17 +93,17 @@ TYPE (ex: input_mix => from INPUT to MIX)
 *	input_mix / input_group
 *	stereo_mix / stereo_group
 *	fx_return_mix / fx_return_group / fx_return_fxs
-	
+
 CH (ex: 32 => CH 1; 65 => ST 2; 9 => FX 2)
 
 *	input		32 -> 63
 *	stereo		64 -> 66
 *	fx_return	8  -> 11
-	
+
 TO (ex: 0 => MIX 1; 5 => MIX 7/8; 17 => FX Send 2)
 
 *	mix			0  -> 6
 *	group		8  -> 11		(only in mix mode)
 *	fxs			16 -> 19
-	
+
 Example: if you want the level of "Stereo 3 into Group 3/4", write <b>$(QU:sendlev_stereo_group_66_9)</b>

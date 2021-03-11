@@ -1,21 +1,25 @@
 /**
  *
  * Companion instance class for the Allen & Heath QU.
- * Version 1.0.3
+ * Version 1.0.4
  * Author Max Kiusso <max@kiusso.net>
  *
  * 2021-03-01	Version 1.0.0
  *
  * 2021-03-04	Version 1.0.1
- *				- Fix level
- *				- New variables
- *				- Presets
+ *			- Fix level
+ *			- New variables
+ *			- Presets
  *
  * 2021-03-05	Version 1.0.3
- *				- Fix feedbacks
- * 				- Remove all system.emit
- *				- Add PAFL feedbacks
- *				- Add PAFL presets
+ *			- Fix feedbacks
+ * 			- Remove all system.emit
+ *			- Add PAFL feedbacks
+ *			- Add PAFL presets
+ *
+ * 2021-03-11	Version 1.0.4
+ *			- Add scene step
+ *			- Add currentScene variable
  */
 
 let tcp = require('../../tcp')
@@ -176,6 +180,13 @@ class instance extends instance_skel {
 
 			case 'scene_recall':
 				cmd.buffers = [Buffer.from([0xb0, 0x00, 0x00, 0xc0, parseInt(opt.scene)])]
+				self.setVariable('currentScene', parseInt(opt.scene) + 1)
+				break
+
+			case 'scene_step':
+				sceneNumber = this.setScene(opt.scene)
+				self.setVariable('currentScene', parseInt(sceneNumber) + 1)
+				cmd.buffers = [Buffer.from([0xb0, 0x00, 0x00, 0xc0, parseInt(sceneNumber)])]
 				break
 
 			case 'mmc':
@@ -340,6 +351,20 @@ class instance extends instance_skel {
 				this.midiSocket.write(cmd.buffers[i])
 			}
 		}
+	}
+
+	setScene(val) {
+		var self = this
+		var qu = quconfig['config'][self.config.model]
+		var scn
+
+		self.getVariable('currentScene', function(res) {
+			scn = parseInt(res) - 1 + val
+			if (scn < 0) scn = 0
+			if (scn > qu['sceneCount']) scn = qu['sceneCount'] - 1
+		})
+
+		return scn
 	}
 
 	getStepLevel(act, ch, step, mix = 999) {
@@ -599,6 +624,14 @@ class instance extends instance_skel {
 						this.fdbState['pafl_' + dt[2]] = dt[8] == 1 ? true : false
 						self.checkFeedbacks('pafl_' + this.getChannel(dt[2])[0])
 					}
+
+					/* Scene */
+					if (dt[1] == 0 && dt[2] == 0 && dt[4] == 32 && dt[5] == 0) {
+						self.setVariable('currentScene', parseInt(dt[7]) + 1)
+					}
+				} else if (data[b] == 192 && 0 <= data[b+1] && data[b+1] <= 99) {
+					/* Scene */
+					self.setVariable('currentScene', parseInt(data[b+1]) + 1)
 				}
 			}
 		}
@@ -690,7 +723,7 @@ class instance extends instance_skel {
 				let dt = JSON.parse(JSON.stringify(data))['data']
 				if (dt.length > 1) {
 					adat = adat.concat(dt)
-					//console.log(adat[ adat.length - 1]);
+					//console.log(adat);
 					if ([247, 254, 0, 7].includes(adat[adat.length - 1])) {
 						this.getRemoteValue(adat)
 						//console.log(adat);
