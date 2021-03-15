@@ -1,7 +1,7 @@
 /**
  *
  * Companion instance class for the Allen & Heath QU.
- * Version 1.0.4
+ * Version 1.0.5
  * Author Max Kiusso <max@kiusso.net>
  *
  * 2021-03-01	Version 1.0.0
@@ -20,6 +20,9 @@
  * 2021-03-11	Version 1.0.4
  *			- Add scene step
  *			- Add currentScene variable
+ *
+ * 2021-03-15	Version 1.0.5
+ *			- Fix issue #6
  */
 
 let tcp = require('../../tcp')

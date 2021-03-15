@@ -24,7 +24,7 @@ Controls the Allen & Heath QU.
 
 Created by referring to "QU Midi Protocol v.1.9" manual.
 
-Current version: 1.0.4
+Current version: 1.0.5
 
 Start version: 1.0.0
 
@@ -42,6 +42,9 @@ New in v.1.0.3
 New in v.1.0.4
 * Add scene step
 * Add currentScene variable
+
+New in v.1.0.5
+* Fix issue #6
 
 ## Configuring:
 
