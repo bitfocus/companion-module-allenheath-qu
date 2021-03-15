@@ -463,11 +463,11 @@ module.exports = {
 		if (this.config.model != 'QU16') {
 			actions['lr_assign_grp'] = {
 				label: 'Assign Group to LR',
-				options: this.panOptions(['Group', this.CHOICES_GROUP]),
+				options: this.lrAssignOptions(['Group', this.CHOICES_GROUP]),
 			}
 			actions['lr_assign_mtx'] = {
 				label: 'Assign Matrix to LR',
-				options: this.panOptions(['Matrix', this.CHOICES_MATRIX]),
+				options: this.lrAssignOptions(['Matrix', this.CHOICES_MATRIX]),
 			}
 		}
 		/**/
