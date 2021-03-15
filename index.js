@@ -673,6 +673,8 @@ class instance extends instance_skel {
 	}
 
 	destroy() {
+		clearInterval(this.connItv);
+		
 		if (this.tcpSocket !== undefined) {
 			this.tcpSocket.destroy()
 		}
