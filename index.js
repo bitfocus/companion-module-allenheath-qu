@@ -220,7 +220,11 @@ class instance extends instance_skel {
 
 			if (action.action.slice(0, 5) == 'level') {
 				let lev = parseInt(opt.level)
-				if (lev >= 998) lev = self.getStepLevel(action.action, CH + channel, lev)
+				if (lev >= 998) {
+					lev = self.getStepLevel(action.action, CH + channel, lev)
+				} else {
+					self.setVariable(`${action.action}_${CH + channel}`, self.getLevel(lev))
+				}
 				cmd.buffers = [Buffer.from([0xb0, 0x63, CH + channel, 0xb0, 0x62, 0x17, 0xb0, 0x06, lev, 0xb0, 0x26, 0x07])]
 			}
 
@@ -610,7 +614,6 @@ class instance extends instance_skel {
 					/* Fader Level */
 					if (dt[1] == 99 && dt[5] == 23) {
 						let rt = self.getChannel(dt[2])
-
 						self.setVariable(`level_${rt[0]}_${dt[2]}`, self.getLevel(dt[8]))
 					}
 
@@ -674,7 +677,7 @@ class instance extends instance_skel {
 
 	destroy() {
 		clearInterval(this.connItv);
-		
+
 		if (this.tcpSocket !== undefined) {
 			this.tcpSocket.destroy()
 		}
