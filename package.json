@@ -1,10 +1,10 @@
 {
 	"name": "allenheath-qu",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"api_version": "1.0.0",
-	"keywords": ["QU16","QU24","QU32"],
+	"keywords": ["QU16","QU24","QU32","QUSB","QUPAC"],
 	"manufacturer": "Allen & Heath",
-	"product": ["QU16","QU24","QU32"],
+	"product": ["QU16","QU24","QU32","QUSB","QUPAC"],
 	"shortname": "QU",
 	"description" : "Allen & Heath QU module for Companion",
 	"main": "index.js",

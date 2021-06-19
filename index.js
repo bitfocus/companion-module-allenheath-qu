@@ -1,7 +1,7 @@
 /**
  *
  * Companion instance class for the Allen & Heath QU.
- * Version 1.0.5
+ * Version 1.0.7
  * Author Max Kiusso <max@kiusso.net>
  *
  * 2021-03-01	Version 1.0.0
@@ -23,6 +23,13 @@
  *
  * 2021-03-15	Version 1.0.5
  *			- Fix issue #6
+ *
+ * 2021-03-21	Version 1.0.6
+ *			- Fix issue #9
+ *
+ * 2021-06-19	Version 1.0.7
+ *			- Add QU-Pac & QU-SB config
+ *			- Add shutdown action
  */
 
 let tcp = require('../../tcp')
@@ -194,6 +201,10 @@ class instance extends instance_skel {
 
 			case 'mmc':
 				cmd.buffers = [Buffer.from([0xf0, 0x7f, 0x7f, 0x06, parseInt(opt.action), 0xf7])]
+				break
+
+			case 'shutdown':
+				cmd.buffers = [Buffer.from([0xb0, 0x63, 0x00, 0xb0, 0x62, 0x5f, 0xb0, 0x06, 0x00, 0xb0, 0x26, 0x00])]
 				break
 		}
 
@@ -670,6 +681,8 @@ class instance extends instance_skel {
 					{ id: 'QU16', label: 'QU 16' },
 					{ id: 'QU24', label: 'QU 24' },
 					{ id: 'QU32', label: 'QU 32' },
+					{ id: 'QUSB', label: 'QU SB' },
+					{ id: 'QUPAC', label: 'QU Pac' },
 				],
 			},
 		]

@@ -24,7 +24,7 @@ Controls the Allen & Heath QU.
 
 Created by referring to "QU Midi Protocol v.1.9" manual.
 
-Current version: 1.0.5
+Current version: 1.0.7
 
 Start version: 1.0.0
 
@@ -46,12 +46,19 @@ New in v.1.0.4
 New in v.1.0.5
 * Fix issue #6
 
+New in v.1.0.6
+* Fix issue #9
+
+New in v.1.0.7
+* Add QU-Pac & QU-SB config
+* Add shutdown action
+
 ## Configuring:
 
 ### New instance
 First step after adding QU instance is to setting it up:
 
-*	Name: 					the name you want
+*	Name: 					the INSTANCE name you want
 *	Target IP:				IP to reach your QU (needs on the same net)
 *	Model:					your QU model
 
@@ -81,10 +88,11 @@ If you set a name (from console) for channel 1 (ex: Singer) the result will be l
 ### Send level
 It works like a fader level but you have to compose variable name (no suggests) following this indications:
 
-*	$(QU:sendlev_TYPE_CH_TO)
+*	$(INSTANCE:sendlev_TYPE_CH_TO)
 
 where:
 
+*	INSTANCE is the name used on config
 *	TYPE is a type of level
 *	CH channel from
 *	TO channel to
