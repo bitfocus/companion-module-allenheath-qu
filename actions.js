@@ -784,6 +784,12 @@ module.exports = {
 		}
 		/**/
 
+		/* Shutdown */
+		actions['shutdown'] = {
+			label: 'Shutdown',
+		}
+		/**/
+
 		return actions
 	},
 }
