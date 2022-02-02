@@ -2,15 +2,35 @@
 	"name": "allenheath-qu",
 	"version": "1.0.7",
 	"api_version": "1.0.0",
-	"keywords": ["QU16","QU24","QU32","QUSB","QUPAC"],
+	"keywords": [
+		"QU16",
+		"QU24",
+		"QU32",
+		"QUSB",
+		"QUPAC"
+	],
 	"manufacturer": "Allen & Heath",
-	"product": ["QU16","QU24","QU32","QUSB","QUPAC"],
+	"product": [
+		"QU16",
+		"QU24",
+		"QU32",
+		"QUSB",
+		"QUPAC"
+	],
 	"shortname": "QU",
-	"description" : "Allen & Heath QU module for Companion",
+	"description": "Allen & Heath QU module for Companion",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Max Kiusso",
-	"license": "MIT"
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-allenheath-qu#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-allenheath-qu/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-allenheath-qu.git"
+	}
 }
