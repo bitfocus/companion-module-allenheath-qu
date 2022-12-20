@@ -5,6 +5,8 @@ module.exports = {
 		var qu = quconfig['config'][this.config.model]
 		var feedbacks = {}
 
+		if (!qu) return feedbacks
+
 		const createtFdb = (nam, typ, lab, col, chs, ofs) => {
 			let fg = this.rgb(col['fg'][0], col['fg'][1], col['fg'][2])
 			let bg = this.rgb(col['bg'][0], col['bg'][1], col['bg'][2])

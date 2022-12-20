@@ -5,6 +5,8 @@ module.exports = {
 		var qu = quconfig['config'][this.config.model]
 		var variables = []
 
+		if (!qu) return variables
+
 		for (let i = 0; i < qu['chCount']; i++) {
 			variables.push({
 				label: `CH ${i + 1} Level`,

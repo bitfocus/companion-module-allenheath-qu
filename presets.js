@@ -5,6 +5,8 @@ module.exports = {
 		var qu = quconfig['config'][this.config.model]
 		var presets = []
 
+		if (!qu) return presets
+
 		/* MUTE */
 		const createtMute = (cat, lab, typ, cnt, ofs) => {
 			var tmp = []

@@ -7,6 +7,8 @@ module.exports = {
 
 		let actions = {}
 
+		if (!qu) return actions
+
 		this.CHOICES_INPUT_CHANNEL = []
 		for (let i = 0; i < qu['chCount']; i++) {
 			this.CHOICES_INPUT_CHANNEL.push({ label: `CH ${i + 1}`, id: i })
@@ -711,13 +713,13 @@ module.exports = {
 			label: 'Scene step',
 			options: [
 				{
-					type:	'number',
-					label:	'Scene +/-',
-					id:		'scene',
-					default:	1,
-					min:		-10,
-					max:		10,
-					required:	true,
+					type: 'number',
+					label: 'Scene +/-',
+					id: 'scene',
+					default: 1,
+					min: -10,
+					max: 10,
+					required: true,
 				},
 			],
 		}
